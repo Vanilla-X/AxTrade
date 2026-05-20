@@ -3,6 +3,7 @@ package com.artillexstudios.axtrade.request;
 import com.artillexstudios.axapi.nms.wrapper.ServerPlayerWrapper;
 import com.artillexstudios.axapi.utils.StringUtils;
 import com.artillexstudios.axtrade.api.events.AxTradeRequestEvent;
+import com.artillexstudios.axtrade.hooks.other.WorldGuardHook;
 import com.artillexstudios.axtrade.safety.SafetyManager;
 import com.artillexstudios.axtrade.trade.Trades;
 import com.artillexstudios.axtrade.utils.SoundUtils;
@@ -10,6 +11,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,6 +53,11 @@ public class Requests {
             return;
         }
 
+        if (!WorldGuardHook.canTradeAt(sender.getLocation()) || !WorldGuardHook.canTradeAt(receiver.getLocation())) {
+            MESSAGEUTILS.sendLang(sender, "request.blocked-region", replacements);
+            return;
+        }
+
         if (sender.isDead() || receiver.isDead()) {
             MESSAGEUTILS.sendLang(sender, "request.not-accepting", replacements);
             return;
@@ -68,6 +75,11 @@ public class Requests {
 
         if (sender.equals(receiver)) {
             MESSAGEUTILS.sendLang(sender, "request.cant-trade-self", replacements);
+            return;
+        }
+
+        if (isVanished(receiver)) {
+            MESSAGEUTILS.sendLang(sender, "commands.invalid-player", Map.of("%player%", receiver.getName()));
             return;
         }
 
@@ -136,5 +148,12 @@ public class Requests {
 
     public static List<Request> getRequests() {
         return requests;
+    }
+
+    private static boolean isVanished(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) return true;
+        }
+        return false;
     }
 }

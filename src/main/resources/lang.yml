@@ -71,6 +71,7 @@ request:
   same-ip: "&#CCFFEEYou can't trade with an account that has the same ip as you!"
   below-required-amount: "&#CCFFEEYou are required to trade at least &f%amount% %currency%&#CCFFEE!"
   blacklisted-world: "&#CCFFEETrades are disabled in this world!"
+  blocked-region: "&#CCFFEETrades are disabled in this region!"
   expired: "&#CCFFEEYour trade request to &#00FFDD%player% &#CCFFEEhas expired!"
   disabled-trading: "&#CCFFEEYou have disabled trades! Use &#00FFDD/trade toggle &#CCFFEEto enable."
 
@@ -116,4 +117,4 @@ update-notifier: "&#AAFFCCThere is a new version of the plugin available! &#DDDD
 safety: "&#FF0000This feature has been disabled for safety reasons and updating the plugin is required, please contact the server administrators."
 
 # do not change this
-version: 9
+version: 10

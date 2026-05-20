@@ -14,6 +14,7 @@ import com.artillexstudios.axapi.utils.StringUtils;
 import com.artillexstudios.axapi.utils.featureflags.FeatureFlags;
 import com.artillexstudios.axtrade.commands.CommandManager;
 import com.artillexstudios.axtrade.hooks.HookManager;
+import com.artillexstudios.axtrade.hooks.other.WorldGuardHook;
 import com.artillexstudios.axtrade.lang.LanguageManager;
 import com.artillexstudios.axtrade.listeners.EntityInteractListener;
 import com.artillexstudios.axtrade.listeners.TradeListeners;
@@ -43,6 +44,11 @@ public final class AxTrade extends AxPlugin {
 
     public static AxPlugin getInstance() {
         return instance;
+    }
+
+    @Override
+    public void load() {
+        WorldGuardHook.register();
     }
 
     public void enable() {
