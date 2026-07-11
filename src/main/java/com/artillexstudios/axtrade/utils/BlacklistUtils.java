@@ -2,7 +2,10 @@ package com.artillexstudios.axtrade.utils;
 
 import com.artillexstudios.axapi.items.WrappedItemStack;
 import com.artillexstudios.axapi.libs.boostedyaml.block.implementation.Section;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -12,14 +15,17 @@ import static com.artillexstudios.axtrade.AxTrade.CONFIG;
 
 public class BlacklistUtils {
 
+    private static final NamespacedKey NO_TRADE_KEY = new NamespacedKey("vx-core", "itemflag/no-trade");
+
     public static boolean isBlacklisted(@Nullable ItemStack it) {
         if (it == null || it.getType().isAir()) return false;
         if (checkLegacy(it)) return true;
         try {
             List<Map<String, Object>> list = CONFIG.getMapList("blacklist-items");
-            if (list == null || list.isEmpty()) return false;
             for (ItemStack stack : ShulkerUtils.getStorageContents(it, true)) {
                 if (stack == null || stack.getType().isAir()) continue;
+                if (hasNoTradeFlag(stack)) return true;
+                if (list == null || list.isEmpty()) continue;
                 WrappedItemStack wrap = WrappedItemStack.wrap(stack);
                 for (Map<String, Object> map : list) {
                     ItemMatcher matcher = new ItemMatcher(wrap, map);
@@ -31,6 +37,12 @@ public class BlacklistUtils {
             ex.printStackTrace();
         }
         return false;
+    }
+
+    private static boolean hasNoTradeFlag(ItemStack stack) {
+        if (!stack.hasItemMeta()) return false;
+        ItemMeta meta = stack.getItemMeta();
+        return meta != null && meta.getPersistentDataContainer().has(NO_TRADE_KEY, PersistentDataType.BYTE);
     }
 
     private static boolean checkLegacy(ItemStack it) {
